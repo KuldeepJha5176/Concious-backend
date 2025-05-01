@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/genai": "^0.12.0",
+    "@google/generative-ai": "^0.24.1",
     "@pinecone-database/pinecone": "^5.1.2",
     "@types/axios": "^0.14.4",
     "@types/bcrypt": "^5.0.2",
