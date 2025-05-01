@@ -1,9 +1,9 @@
-import { Response } from "express";
+import type { Response } from "express";
 import mongoose from "mongoose";
 import { ContentModel } from "../models";
-import { AuthRequest } from "../types";
+import type { AuthRequest } from "../types";
 import { getPineconeIndex } from "../config/pinecone";
-import { getEmbedding } from "../services/embeddings";
+import { getEmbedding } from "../services/embedding";
 
 import { fetchYouTube, fetchTwitter, fetchWebsite, handleNote } from '../services/mediaHandlers';
 

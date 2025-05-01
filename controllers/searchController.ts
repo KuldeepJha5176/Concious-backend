@@ -1,6 +1,6 @@
-import { Response } from "express";
-import { AuthRequest } from "../types";
-import { getEmbedding, model } from "../services/embeddings";
+import type { Response } from "express";
+import type { AuthRequest } from "../types";
+import { getEmbedding, model } from "../services/embedding";
 import { getPineconeIndex } from "../config/pinecone";
 import { ContentModel } from "../models";
 import { searchSchema } from "../utils/validation";

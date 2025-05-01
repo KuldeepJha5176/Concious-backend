@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { AuthRequest } from "../types";
+import type { Request, Response } from "express";
+import type { AuthRequest } from "../types";
 import { LinkModel, ContentModel, UserModel } from "../models";
 import { v4 as uuidv4 } from "uuid";
 import { shareSchema } from "../utils/validation";
