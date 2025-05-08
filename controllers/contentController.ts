@@ -5,15 +5,17 @@ import type { AuthRequest } from "../types";
 import { getPineconeIndex } from "../config/pinecone";
 import { getEmbedding } from "../services/embedding";
 
-import { fetchYouTube, fetchTwitter, fetchWebsite, handleNote } from '../services/mediaHandlers';
+import {
+  fetchYouTube,
+  fetchTwitter,
+  fetchWebsite,
+  handleNote,
+} from "../services/mediaHandlers";
 
-export interface YouTubeMetadata {
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-}
-
-export const addContent = async (req: AuthRequest, res: Response): Promise<void> => {
+export const addContent = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   const { link, title, content } = req.body;
 
   try {
@@ -23,70 +25,104 @@ export const addContent = async (req: AuthRequest, res: Response): Promise<void>
     let metadata;
 
     if (link) {
-      
-      if (link.match(/youtube\.com|youtu\.be/i)) {
-        metadata = await fetchYouTube(link);
-      } 
-      else if (link.match(/twitter\.com|x\.com/i)) {
-        metadata = await fetchTwitter(link);
-      }
-      else {
-        metadata = await fetchWebsite(link);
+      try {
+        if (link.match(/youtube\.com|youtu\.be/i)) {
+          metadata = await fetchYouTube(link);
+        } else if (link.match(/twitter\.com|x\.com/i)) {
+          metadata = await fetchTwitter(link);
+        } else {
+          metadata = await fetchWebsite(link);
+        }
+      } catch (mediaError) {
+        console.error("Media processing error:", mediaError);
+        res.status(422).json({ 
+          message: "Could not process the provided link",
+          error: mediaError instanceof Error ? mediaError.message : String(mediaError)
+        });
+        return;
       }
 
       titleToSave = titleToSave || metadata.title;
       contentToSave = metadata.content;
       imageUrl = metadata.thumbnail;
     } else {
-    
       metadata = await handleNote(titleToSave, contentToSave);
       titleToSave = metadata.title;
       contentToSave = metadata.content;
     }
 
-    const timestamp = new Date().toLocaleString();
-    const textForEmbedding = `Title: ${titleToSave}\nDate: ${timestamp}\nContent: ${contentToSave}`;
-
-    const newContent = await ContentModel.create({
-      title: titleToSave,
-      link: link || null,
-      type: link ? "Url" : "Note",
-      content: contentToSave,
-      imageUrl,
-      tag: [],
-      userId: req.userId,
-      createdAt: new Date()
-    });
-
-    const embedding = await getEmbedding(textForEmbedding);
-    const pineconeIndex = getPineconeIndex();
-
-    await pineconeIndex.upsert([{
-      id: newContent._id.toString(),
-      values: embedding,
-      metadata: {
-        userId: req.userId?.toString() || "",
+    // Create content document in MongoDB
+    let newContent;
+    try {
+      newContent = await ContentModel.create({
         title: titleToSave,
-        contentType: link ? "Url" : "Note",
-        timestamp,
-        snippet: contentToSave.substring(0, 100),
-        imageUrl: imageUrl || ""
+        link: link || null,
+        type: link ? "Url" : "Note",
+        content: contentToSave,
+        imageUrl,
+        tag: [],
+        userId: req.userId,
+        createdAt: new Date(),
+      });
+    } catch (dbError) {
+      console.error("Database error:", dbError);
+      res.status(500).json({ 
+        message: "Failed to save content to database", 
+        error: dbError instanceof Error ? dbError.message : String(dbError)
+      });
+      return;
+    }
+
+    // Create vector embedding and save to Pinecone
+    try {
+      const timestamp = new Date().toLocaleString();
+      const textForEmbedding = `Title: ${titleToSave}\nDate: ${timestamp}\nContent: ${contentToSave}`;
+      const embedding = await getEmbedding(textForEmbedding);
+      
+      const pineconeIndex = getPineconeIndex();
+      await pineconeIndex.upsert([
+        {
+          id: newContent._id.toString(),
+          values: embedding,
+          metadata: {
+            userId: req.userId?.toString() || "",
+            title: titleToSave,
+            contentType: link ? "Url" : "Note",
+            timestamp,
+            snippet: contentToSave.substring(0, 100),
+            imageUrl: imageUrl || "",
+          },
+        },
+      ]);
+      console.log("Successfully added vector to Pinecone");
+    } catch (vectorError) {
+      // If Pinecone operation fails, we still keep the content in MongoDB
+      console.error("Vector store error:", vectorError);
+      
+      // If it's a dimension mismatch error, provide a clearer message
+      if (vectorError instanceof Error && 
+          vectorError.message.includes("Vector dimension") && 
+          vectorError.message.includes("does not match")) {
+        console.error("Dimension mismatch detected in Pinecone operation");
       }
-    }]);
+      
+      // We don't return an error to the client since the content was saved successfully
+      // But we do log the issue for the server admin to address
+    }
 
     res.status(200).json({
       message: "Content added successfully",
       contentId: newContent._id,
-      imageUrl
+      imageUrl,
     });
   } catch (err) {
     console.error("Error adding content:", err);
-    console.log("here");
-    
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ 
+      message: "Internal server error",
+      error: err instanceof Error ? err.message : String(err)
+    });
   }
 };
-
 export const getContent = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.userId;
   try {

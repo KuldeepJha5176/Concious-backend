@@ -1,82 +1,103 @@
 import axios from "axios";
 import puppeteer from "puppeteer";
 
-export interface YoutubeMetaData {
+export interface YouTubeMetadata {
   title: string;
   description: string;
   thumbnailUrl: string;
 }
 
-export interface XMetaData {
+export interface TwitterMetadata {
   text: string;
   author: string;
-  mediaUrl: string[];
+  mediaUrls: string[];
 }
 
-interface contentMetaData {
+interface ContentMetadata {
   title: string;
   content: string;
-  thumnail: string | null;
+  thumbnail: string | null;
 }
+
+// Helper function for controlled delays
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const handleNote = async (
   title: string,
   content: string
-): Promise<contentMetaData> => {
+): Promise<ContentMetadata> => {
   return {
-    title: title || "Untitled note",
-    content: content || " ",
-    thumnail: null,
+    title: title || "Untitled Note",
+    content: content || "",
+    thumbnail: null,
   };
 };
 
-export const fetchYouTube = async (url: string): Promise<contentMetaData> => {
+export const fetchYouTube = async (url: string): Promise<ContentMetadata> => {
   try {
     const videoId = url.match(
       /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/
     )?.[1];
-    if (!videoId) {
-      throw new Error("Invalid Youtube URL");
-    }
+    if (!videoId) throw new Error("Invalid YouTube URL");
+
     const response = await axios.get(
       `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${process.env.YOUTUBE_API_KEY}&part=snippet`
     );
+
     const video = response.data.items[0]?.snippet;
     if (!video) throw new Error("YouTube metadata not found");
 
     return {
       title: video.title,
       content: `${video.description}\n\n${url}`,
-      thumnail: video.thumbnails.high?.url || null,
+      thumbnail: video.thumbnails.high?.url || null,
     };
   } catch (error) {
     console.error("YouTube fetching error:", error);
     throw error;
   }
 };
+
 export const fetchTwitter = async (url: string): Promise<ContentMetadata> => {
-  const browser = await puppeteer.launch({
-    headless: true, // Using boolean true for compatibility
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-accelerated-2d-canvas",
-      "--no-first-run",
-      "--no-zygote",
-      "--single-process",
-      "--disable-gpu",
-      "--ignore-certificate-errors",
-    ],
-    timeout: 60000,
-  });
+  let browser;
   try {
+    // Launch with improved settings
+    browser = await puppeteer.launch({
+      headless: "new", // Using new headless mode for better stability
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--disable-gpu",
+        "--ignore-certificate-errors",
+      ],
+      defaultViewport: { width: 1280, height: 800 },
+      timeout: 60000,
+    });
+
+    // Create page with proper error handling
     const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     );
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForSelector("body");
+
+    // Set timeouts and proper navigation options
+    await page.setDefaultNavigationTimeout(60000);
+
+    // Navigate with better waitUntil options
+    await page.goto(url, {
+      waitUntil: ["domcontentloaded", "networkidle2"],
+      timeout: 60000,
+    });
+
+    // Add a brief delay for JavaScript execution
+    await sleep(2000);
+
+    // Wait for body with a timeout
+    await page.waitForSelector("body", { timeout: 30000 });
 
     const metadata = await page.evaluate(() => {
       const tweetText =
@@ -100,35 +121,62 @@ export const fetchTwitter = async (url: string): Promise<ContentMetadata> => {
     console.error("Twitter fetching error:", error);
     throw error;
   } finally {
-    await browser.close();
+    // Ensure browser is properly closed with delay
+    if (browser) {
+      try {
+        await browser.close();
+        // Add delay to let resources be released
+        await sleep(1000);
+      } catch (closeError) {
+        console.error("Error closing browser:", closeError);
+      }
+    }
   }
 };
 
 export const fetchWebsite = async (url: string): Promise<ContentMetadata> => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-accelerated-2d-canvas",
-      "--no-first-run",
-      "--no-zygote",
-      "--single-process",
-      "--disable-gpu",
-      "--ignore-certificate-errors",
-    ],
-    timeout: 60000,
-  });
+  let browser;
   try {
+    // Launch with improved settings
+    browser = await puppeteer.launch({
+      headless: "new", // Using new headless mode
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--disable-gpu",
+        "--ignore-certificate-errors",
+      ],
+      defaultViewport: { width: 1280, height: 800 },
+      timeout: 60000,
+    });
+
+    // Create page with proper settings
     const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     );
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-    await page.waitForSelector("body");
 
-    return await page.evaluate(() => {
+    // Set timeouts
+    await page.setDefaultNavigationTimeout(60000);
+
+    // Navigate with better waitUntil options
+    await page.goto(url, {
+      waitUntil: ["domcontentloaded", "networkidle2"],
+      timeout: 60000,
+    });
+
+    // Add a brief delay for JavaScript execution
+    await sleep(2000);
+
+    // Wait for body with a timeout
+    await page.waitForSelector("body", { timeout: 30000 });
+
+    // Extract content
+    const result = await page.evaluate(() => {
       const title = document.title || "Untitled";
       const content = document.body.innerText?.trim() || "";
 
@@ -145,11 +193,22 @@ export const fetchWebsite = async (url: string): Promise<ContentMetadata> => {
 
       return { title, content, thumbnail: absoluteUrl };
     });
+
+    return result;
   } catch (error) {
     console.error("Website fetching error:", error);
     throw error;
   } finally {
-    await browser.close();
+    // Ensure browser is properly closed with delay
+    if (browser) {
+      try {
+        await browser.close();
+        // Add delay to let resources be released
+        await sleep(1000);
+      } catch (closeError) {
+        console.error("Error closing browser:", closeError);
+      }
+    }
   }
 };
 
