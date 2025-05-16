@@ -43,7 +43,7 @@ RUN google-chrome-stable --version
 WORKDIR /app
 
 # Copy bun.lockb and package.json
-COPY bun.lockb package.json ./
+COPY bun.lock package.json ./
 
 # Install dependencies with Bun
 RUN bun install
@@ -57,7 +57,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 COPY . .
 
 # Build the app (if needed)
-RUN bun run build
+RUN bun install
 
 # Run the app
 CMD ["bun","index.ts"]  
