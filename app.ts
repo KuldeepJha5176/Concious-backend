@@ -9,23 +9,24 @@ const app = express();
 
 // Configure CORS
 const allowedOrigins = [
-
-  "http://localhost:5173",
   "https://concious-frontend.vercel.app/",
-  "https://concious-frontend-6lumrmnok-ranacjha-gmailcoms-projects.vercel.app/"
+  "https://concious-frontend-6lumrmnok-ranacjha-gmailcoms-projects.vercel.app/",
+  "http://localhost:5173",
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
