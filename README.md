@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/KuldeepJha5176/Concious-backend">
-    <img src="https://raw.githubusercontent.com/KuldeepJha5176/Concious-frontend/main/public/logo.png" alt="Logo" width="40px" />
+ <img src="https://github.com/KuldeepJha5176/concious-frontend/blob/main/public/logo.png" alt="Logo" width="40px" >
   </a>
 </p>
 
