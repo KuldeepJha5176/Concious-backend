@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/KuldeepJha5176/Concious-backend">
- <img src="https://github.com/KuldeepJha5176/concious-frontend/blob/main/public/logo.png" alt="Logo" width="40px" >
+ <img src="https://github.com/KuldeepJha5176/concious-frontend/blob/master/public/logo.png" alt="Logo" width="40px" >
   </a>
 </p>
 
@@ -23,7 +23,7 @@
 
 ## Frontend Repository
 
-👉 [conscious-client](https://github.com/KuldeepJha5176/concious-frontend.git)
+👉 [conscious-frontend](https://github.com/KuldeepJha5176/concious-frontend.git)
 
 ---
 
