@@ -10,7 +10,9 @@ const app = express();
 // Configure CORS
 const allowedOrigins = [
 
-  "http://localhost:5173"
+  "http://localhost:5173",
+  "https://concious-frontend.vercel.app/",
+  "https://concious-frontend-6lumrmnok-ranacjha-gmailcoms-projects.vercel.app/"
 ];
 
 app.use(cors({
