@@ -1,14 +1,15 @@
 # Concious Backend
+
     <p align="center">
-  <a href="https://github.com/KuldeepJha5176/Concious-backend">
-    <img src="https://github.com/KuldeepJha5176/Concious-backend">client/blob/main/public/logo.png" alt="Logo" width="40px" >
-  </a>
-<br/>
-  <h3 align="center">Conscious app</h3>
-  <p align="center" >
-   Conscious is a second brain web app designed to save and search links, notes, and other media from various sources effortlessly. This repository contains the backend codebase for the Conscious application.
-    </p>
-  <div align="center">
+        <a href="https://github.com/KuldeepJha5176/Concious-backend">
+         <img src="https://github.com/KuldeepJha5176/Concious-backend">client/blob/main/public/logo.png" alt="Logo" width="40px" >
+        </a>
+        <br/>
+        <h3 align="center">Conscious app</h3>
+        <p align="center" >
+        Conscious is a second brain web app designed to save and search links, notes, and other media from various sources effortlessly. This repository contains the backend codebase for the Conscious application.
+            </p>
+        <div align="center">
 
    
 ![Language](https://img.shields.io/github/Language/KuldeepJha5176/Concious-backend)
