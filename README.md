@@ -1,43 +1,49 @@
-# Concious Backend
+# Conscious Backend
 
-    <p align="center">
-        <a href="https://github.com/KuldeepJha5176/Concious-backend">
-         <img src="https://github.com/KuldeepJha5176/Concious-backend">client/blob/main/public/logo.png" alt="Logo" width="40px" >
-        </a>
-        <br/>
-        <h3 align="center">Conscious app</h3>
-        <p align="center" >
-        Conscious is a second brain web app designed to save and search links, notes, and other media from various sources effortlessly. This repository contains the backend codebase for the Conscious application.
-            </p>
-        <div align="center">
-
-   
-![Language](https://img.shields.io/github/Language/KuldeepJha5176/Concious-backend)
-![License](https://img.shields.io/github/license/KuldeepJha5176/Concious-backend)
-![Repo Size](https://img.shields.io/github/repo-size/KuldeepJha5176/Concious-backend)
-![Last Commit](https://img.shields.io/github/last-commit/KuldeepJha5176/Concious-backend)
-![Repo Size](https://img.shields.io/github/repo-size/KuldeepJha5176/Concious-backend)
-
-  </div>
+<p align="center">
+  <a href="https://github.com/KuldeepJha5176/Concious-backend">
+    <img src="https://raw.githubusercontent.com/KuldeepJha5176/Concious-frontend/main/public/logo.png" alt="Logo" width="40px" />
+  </a>
 </p>
 
-## FE repo -> [conscious-client](https://github.com/KuldeepJha5176/concious-frontend.git).
+<h3 align="center">Conscious App</h3>
+
+<p align="center">
+  Conscious is a second brain web app designed to save and search links, notes, and other media from various sources effortlessly. This repository contains the backend codebase for the Conscious application.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/languages/top/KuldeepJha5176/Concious-backend" />
+  <img src="https://img.shields.io/github/license/KuldeepJha5176/Concious-backend" />
+  <img src="https://img.shields.io/github/repo-size/KuldeepJha5176/Concious-backend" />
+  <img src="https://img.shields.io/github/last-commit/KuldeepJha5176/Concious-backend" />
+</p>
+
+---
+
+## Frontend Repository
+
+👉 [conscious-client](https://github.com/KuldeepJha5176/concious-frontend.git)
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- Bun
-- MongoDB
-- Pinecone
-- YouTube API Key
+- [Bun](https://bun.sh/)
+- [MongoDB](https://www.mongodb.com/)
+- [Pinecone](https://www.pinecone.io/)
+- [YouTube API Key](https://developers.google.com/youtube/v3)
 
 ### Installation
 
-1.  Clone the repository
-    ```bash
-    git clone https://github.com/KuldeepJha5176/Concious-backend.git
-    ```
+1. Clone the repository:
+
+```bash
+git clone https://github.com/KuldeepJha5176/Concious-backend.git
+cd Concious-backend
+```
 2.  Install dependencies with `bun install`
 3.  Create a `.env` file in the root directory and add the following variables:
 
