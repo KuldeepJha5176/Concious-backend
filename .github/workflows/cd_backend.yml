@@ -25,20 +25,20 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: KuldeepJha5176/Concious-backend:${{ github.sha }}
+          tags: KuldeepJha5176/conscious-backend:${{ github.sha }}
           build-args: |
             DATABASE_URL=${{ secrets.STAGING_DATABASE }}
 
 
-        # - name: Clone Concious-backend repo, update, and push
+        # - name: Clone conscious-backend repo, update, and push
         # env:
         #   PAT: ${{ secrets.PAT }}
         # run: |
-        #   git clone https://github.com/KuldeepJha5176/Concious-backend.git
-        #   cd Concious-backend
-        #   sed -i 's|image: KuldeepJha5176/concious-staging:.*|image: KuldeepJha5176/concious-staging:${{ github.sha }}|' staging/cms/deployment.yml
+        #   git clone https://github.com/KuldeepJha5176/conscious-backend.git
+        #   cd conscious-backend
+        #   sed -i 's|image: KuldeepJha5176/conscious-staging:.*|image: KuldeepJha5176/conscious-staging:${{ github.sha }}|' staging/cms/deployment.yml
         #   git config user.name "GitHub Actions Bot"
         #   git config user.email "actions@github.com"
-        #   git add staging/concious/deployment.yml
-        #   git commit -m "Update concious image to ${{ github.sha }}"
-        #   git push https://${PAT}@github.com/KuldeepJha5176/Concious-backend.git main
+        #   git add staging/conscious/deployment.yml
+        #   git commit -m "Update conscious image to ${{ github.sha }}"
+        #   git push https://${PAT}@github.com/KuldeepJha5176/conscious-backend.git main
