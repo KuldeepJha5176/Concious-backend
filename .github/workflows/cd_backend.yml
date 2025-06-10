@@ -25,7 +25,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: kuldeepJha5176/conscious-backend:${{ github.sha }}
+          tags: KuldeepJha5176/conscious-backend:${{ github.sha }}
           build-args: |
             DATABASE_URL=${{ secrets.STAGING_DATABASE }}
 
