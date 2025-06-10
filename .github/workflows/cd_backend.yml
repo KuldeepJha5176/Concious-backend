@@ -25,11 +25,11 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: KuldeepJha5176/conscious-backend:${{ github.sha }}
+          tags: docker.io/kuldeepjha5176/conscious-backend:${{ github.sha }}
           build-args: |
             DATABASE_URL=${{ secrets.STAGING_DATABASE }}
 
-        #k8s
+
         # - name: Clone conscious-backend repo, update, and push
         # env:
         #   PAT: ${{ secrets.PAT }}
